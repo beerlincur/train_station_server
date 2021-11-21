@@ -40,15 +40,15 @@ class UserStorage:
         return user
 
     async def get_user_by_passport(self, passport: str) -> User:
-        sql = 'SELECT * FROM [User] WHERE (passport = $1)'
+        sql = 'SELECT * FROM [User] WHERE (passport = ?)'
         row = await self.db.execute(sql, passport)
         if not row:
             throw_not_found('No user with this passport!')
-        user = User.parse_obj(row)
+        user = User.parse_obj(row[0])
         return user
 
     async def get_user_by_id(self, user_id: int) -> User:
-        sql = 'SELECT * FROM [User] WHERE (user_id = $1)'
+        sql = 'SELECT * FROM [User] WHERE (user_id = ?)'
         row = await self.db.execute(sql, user_id)
         if not row:
             throw_not_found('No user with this id!')
@@ -56,7 +56,7 @@ class UserStorage:
         return user
 
     async def get_all_users_by_role(self, role_id: int) -> List[User]:
-        sql = 'SELECT * FROM [User] u WHERE (u.role_id = $1)'
+        sql = 'SELECT * FROM [User] u WHERE (u.role_id = ?)'
         rows = await self.db.execute(sql, role_id)
         output: List[User] = []
         for row in rows:
@@ -76,7 +76,7 @@ class UserStorage:
               'middle_name,' \
                 'login_, ' \
                 'password_,' \
-              'passport, role_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *'
+              'passport, role_id) VALUES (?,?,?,?,?,?,?) RETURNING *'
         row = await self.db.execute(sql,
                                     first_name,
                                     second_name,
@@ -98,17 +98,17 @@ class UserStorage:
                 'login_,' \
                 'password_,' \
               'passport,' \
-              'role_id) = ($2,$3,$4,$5,$6,$7,$8) WHERE id = $1'
+              'role_id) = (?,?,?,?,?,?,?) WHERE id = ?'
         await self.db.execute(sql,
                               user.user_id,
                               user.first_name,
                               user.second_name,
                               user.middle_name,
-                              user.login,
-                              user.password,
+                              user.login_,
+                              user.password_,
                               user.passport,
                               user.role_id)
 
     async def delete(self, user_id: int):
-        sql = 'DELETE FROM [User] WHERE user_id = $1'
+        sql = 'DELETE FROM [User] WHERE user_id = ?'
         await self.db.execute(sql, user_id)
