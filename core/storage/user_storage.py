@@ -30,25 +30,34 @@ class UserStorage:
             throw_credential_exception()
         return user
 
+    async def get_user_by_login_password(self, login: str, password: str) -> User:
+        sql = 'SELECT * FROM [User] WHERE (login_ = ? AND password_ = ?)'
+        res = await self.db.execute(sql, login, password)
+        print(res)
+        if not res:
+            throw_not_found('No user with this login and password!')
+        user = User.parse_obj(res[0])
+        return user
+
     async def get_user_by_passport(self, passport: str) -> User:
-        sql = 'SELECT * FROM User WHERE (passport = $1)'
-        row = await self.db.fetch_row(sql, passport)
+        sql = 'SELECT * FROM [User] WHERE (passport = $1)'
+        row = await self.db.execute(sql, passport)
         if not row:
             throw_not_found('No user with this passport!')
         user = User.parse_obj(row)
         return user
 
     async def get_user_by_id(self, user_id: int) -> User:
-        sql = 'SELECT * FROM User WHERE (user_id = $1)'
-        row = await self.db.fetch_row(sql, user_id)
+        sql = 'SELECT * FROM [User] WHERE (user_id = $1)'
+        row = await self.db.execute(sql, user_id)
         if not row:
             throw_not_found('No user with this id!')
         user = User.parse_obj(row)
         return user
 
     async def get_all_users_by_role(self, role_id: int) -> List[User]:
-        sql = 'SELECT * FROM User u WHERE (u.role_id = $1)'
-        rows = await self.db.fetch(sql, role_id)
+        sql = 'SELECT * FROM [User] u WHERE (u.role_id = $1)'
+        rows = await self.db.execute(sql, role_id)
         output: List[User] = []
         for row in rows:
             output.append(User.parse_obj(row))
@@ -58,40 +67,48 @@ class UserStorage:
                   first_name: str,
                   second_name: str,
                   middle_name: Optional[str],
+                  login: str,
+                  password: str,
                   passport: str,
                   role_id: int) -> User:
-        sql = f'INSERT INTO User (' \
-              'first_name,' \
-              ' second_name,' \
-              ' middle_name,' \
-              ' passport, role_id,' \
-              ' VALUES ($1,$2,$3,$4,$5) RETURNING *'
-        row = await self.db.fetch_row(sql,
-                                      first_name,
-                                      second_name,
-                                      middle_name,
-                                      passport,
-                                      role_id)
+        sql = 'INSERT INTO [User] (first_name,' \
+              'second_name,' \
+              'middle_name,' \
+                'login_, ' \
+                'password_,' \
+              'passport, role_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *'
+        row = await self.db.execute(sql,
+                                    first_name,
+                                    second_name,
+                                    middle_name,
+                                    login,
+                                    password,
+                                    passport,
+                                    role_id)
         if not row:
             throw_server_error('Unable to add to table User!')
         user = User.parse_obj(row)
         return user
 
     async def update(self, user: User) -> None:
-        sql = 'UPDATE User SET (' \
+        sql = 'UPDATE [User] SET (' \
               'first_name,' \
               'second_name,' \
               'middle_name,' \
+                'login_,' \
+                'password_,' \
               'passport,' \
-              'role_id)= ($2,$3,$4,$5,$6) WHERE id = $1'
+              'role_id) = ($2,$3,$4,$5,$6,$7,$8) WHERE id = $1'
         await self.db.execute(sql,
                               user.user_id,
                               user.first_name,
                               user.second_name,
                               user.middle_name,
+                              user.login,
+                              user.password,
                               user.passport,
                               user.role_id)
 
     async def delete(self, user_id: int):
-        sql = 'DELETE FROM User WHERE user_id = $1'
+        sql = 'DELETE FROM [User] WHERE user_id = $1'
         await self.db.execute(sql, user_id)

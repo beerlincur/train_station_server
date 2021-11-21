@@ -19,6 +19,8 @@ class UserRegisterRequest(BaseModel):
     first_name: str
     second_name: str
     middle_name: Optional[str]
+    login: str
+    password: str
     passport: str
     role_id: int
 
@@ -37,9 +39,9 @@ class User(BaseModel):
     first_name: str
     second_name: str
     middle_name: Optional[str]
+    login_: str
+    password_: str
     passport: str
-    login: str
-    password: str
     role_id: int
 
     def get_token(self) -> str:
@@ -53,6 +55,11 @@ class User(BaseModel):
     def __eq__(self, other):
         return (isinstance(other, self.__class__)
                 and self.__dict__ == other.__dict__)
+
+
+class UserLoginRequest(BaseModel):
+    login: str
+    password: str
 
 
 class UserUpdateRequest(BaseModel):
@@ -76,6 +83,6 @@ class UserUpdateRequest(BaseModel):
         if self.role_id:
             user.role_id = self.role_id
         if self.login:
-            user.login = self.login
+            user.login_ = self.login
         if self.password:
-            user.password = self.password
+            user.password_ = self.password
