@@ -66,8 +66,6 @@ class UserUpdateRequest(BaseModel):
     first_name: Optional[str]
     second_name: Optional[str]
     middle_name: Optional[str]
-    passport: Optional[str]
-    role_id: Optional[int]
     login: Optional[str]
     password: Optional[str]
 
@@ -75,13 +73,9 @@ class UserUpdateRequest(BaseModel):
         if self.first_name:
             user.first_name = self.first_name
         if self.second_name:
-            user.last_name = self.second_name
+            user.second_name = self.second_name
         if self.middle_name:
             user.middle_name = self.middle_name
-        if self.passport:
-            user.phone = self.passport
-        if self.role_id:
-            user.role_id = self.role_id
         if self.login:
             user.login_ = self.login
         if self.password:

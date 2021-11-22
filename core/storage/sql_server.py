@@ -67,6 +67,8 @@ class AsyncDB(DB):
                 # this row makes cur.execute result: [(1, 'hello')]
                 # looks like this [{"user_id":1,"first_name":"hello"}]
                 # to be able to use 'parse_obj'
+                if cur.description is None:
+                    return []
                 return [dict(zip([column[0] for column in cur.description], row))
                         for row in await cur.fetchall()]
         except Exception as e:

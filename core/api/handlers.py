@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage
 from core.model.ticket import Ticket
-from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest
+from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
 
 router = APIRouter()
 
@@ -44,9 +44,13 @@ async def login(login_request: UserLoginRequest):
     return Token(access_token=token, token_type='bearer')
 
 
-@router.get('/api/users', response_model=str)
-async def users() -> Dict[str, str]:
-    return await ping_storage.get_value_hello()
+@router.put('/api/user', response_model=User)
+async def update_user(user_id: int, user_request: UserUpdateRequest,
+                      user: User = Depends(user_storage.get_user_by_token)):
+    user_output = await user_storage.get_user_by_id(user_id)
+    user_request.update_user(user_output)
+    await user_storage.update(user_output)
+    return user_output
 
 
 @router.get('/api/tickets/feed', response_model=List[Ticket])
