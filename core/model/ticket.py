@@ -12,6 +12,7 @@ class Ticket(BaseModel):
     seat_number: int
     is_bought: bool
     is_in_train: bool
+    road_number: int
 
 
 class TicketResponse(BaseModel):
@@ -23,6 +24,7 @@ class TicketResponse(BaseModel):
     seat_number: int
     is_bought: bool
     is_in_train: bool
+    road_number: int
 
 
 class TicketRequest(BaseModel):
@@ -33,6 +35,7 @@ class TicketRequest(BaseModel):
     seat_number: Optional[int]
     is_bought: Optional[bool]
     is_in_train: Optional[bool]
+    road_number: Optional[int]
 
     def update_ticket(self, ticket: Ticket) -> None:
         if self.road_id:
@@ -49,3 +52,5 @@ class TicketRequest(BaseModel):
             ticket.is_bought = self.is_bought
         if self.is_in_train is not None:
             ticket.is_in_train = self.is_in_train
+        if self.road_number:
+            ticket.road_number = self.road_number

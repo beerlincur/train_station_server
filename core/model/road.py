@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class Train(BaseModel):
-    train_id: int
+class Road(BaseModel):
+    road_id: int
     name: str
