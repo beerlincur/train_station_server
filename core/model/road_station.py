@@ -15,7 +15,7 @@ class RoadStation(BaseModel):
     num_in_road: int
     arrival_time: datetime
     departure_time: datetime
-    road_number: int
+    race_number: int
 
 
 class RoadStationResponse(BaseModel):
@@ -26,7 +26,7 @@ class RoadStationResponse(BaseModel):
     num_in_road: int
     arrival_time: datetime
     departure_time: datetime
-    road_number: int
+    race_number: int
 
 
 class TicketRoadResponse(BaseModel):
@@ -34,3 +34,11 @@ class TicketRoadResponse(BaseModel):
     name: str
     departure_time: datetime
     arrival_time: datetime
+
+
+class RoadStationRaceResponse(BaseModel):
+    road_station_id: int
+    station: Station
+    num_in_road: int
+    arrival_time: datetime
+    departure_time: datetime

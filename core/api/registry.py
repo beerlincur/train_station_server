@@ -3,6 +3,7 @@ import os
 
 from core.storage import sql_server
 from core.storage.ping_storage import PingStorage
+from core.storage.race_storage import RaceStorage
 from core.storage.road_station_storage import RoadStationStorage
 from core.storage.road_storage import RoadStorage
 from core.storage.station_storage import StationStorage
@@ -22,4 +23,5 @@ road_storage = RoadStorage(db)
 road_station_storage = RoadStationStorage(db)
 station_storage = StationStorage(db)
 train_storage = TrainStorage(db)
+race_storage = RaceStorage(db)
 

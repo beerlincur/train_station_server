@@ -1,10 +1,10 @@
+from datetime import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel
 
 from core.model.road import Road
 from core.model.road_station import RoadStationResponse, TicketRoadResponse
-from core.model.station import Station
 
 
 class Ticket(BaseModel):
@@ -16,7 +16,7 @@ class Ticket(BaseModel):
     seat_number: int
     is_bought: bool
     is_in_train: bool
-    road_number: int
+    race_number: int
 
 
 class TicketResponse(BaseModel):
@@ -28,7 +28,7 @@ class TicketResponse(BaseModel):
     seat_number: int
     is_bought: bool
     is_in_train: bool
-    road_number: int
+    race_number: int
     stations: List[TicketRoadResponse]
 
 
@@ -40,7 +40,7 @@ class TicketRequest(BaseModel):
     seat_number: Optional[int]
     is_bought: Optional[bool]
     is_in_train: Optional[bool]
-    road_number: Optional[int]
+    race_number: Optional[int]
 
     def update_ticket(self, ticket: Ticket) -> None:
         if self.road_id:
@@ -57,5 +57,17 @@ class TicketRequest(BaseModel):
             ticket.is_bought = self.is_bought
         if self.is_in_train is not None:
             ticket.is_in_train = self.is_in_train
-        if self.road_number:
-            ticket.road_number = self.road_number
+        if self.race_number:
+            ticket.race_number = self.race_number
+
+
+class TicketRaceResponse(BaseModel):
+    ticket_id: int
+    departure_station_name: str
+    departure_station_time: datetime
+    arrival_station_name: str
+    arrival_station_time: datetime
+    car_number: int
+    seat_number: int
+    is_bought: bool
+    is_in_train: bool

@@ -2,8 +2,9 @@ from typing import Dict, List
 
 from fastapi import APIRouter, Depends
 
-from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage
+from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage, race_storage
 from core.helpers.ticket import generate_tickets_response
+from core.model.race import RaceResponse
 from core.model.ticket import Ticket, TicketResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
 
@@ -58,4 +59,10 @@ async def update_user(user_id: int, user_request: UserUpdateRequest,
 async def tickets_feed(user: User = Depends(user_storage.get_user_by_token)):
     tickets = await ticket_storage.get_all_tickets()
     return await generate_tickets_response(tickets)
+
+
+@router.get('/api/races/feed', response_model=List[RaceResponse])
+async def races_feed(user: User = Depends(user_storage.get_user_by_token)):
+    return await race_storage.get_all_future_races()
+
 

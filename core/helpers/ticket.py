@@ -18,7 +18,7 @@ async def generate_tickets_response(tickets: List[Ticket]) -> List[TicketRespons
                 seat_number=t.seat_number,
                 is_bought=t.is_bought,
                 is_in_train=t.is_in_train,
-                road_number=t.road_number,
+                race_number=t.race_number,
                 stations=await road_station_storage.get_between_ids(t.departure_station_id, t.arrival_station_id)
             )
         )
