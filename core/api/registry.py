@@ -2,6 +2,7 @@ import datetime
 import os
 
 from core.storage import sql_server
+from core.storage.order_storage import OrderStorage
 from core.storage.ping_storage import PingStorage
 from core.storage.race_storage import RaceStorage
 from core.storage.road_station_storage import RoadStationStorage
@@ -24,4 +25,5 @@ road_station_storage = RoadStationStorage(db)
 station_storage = StationStorage(db)
 train_storage = TrainStorage(db)
 race_storage = RaceStorage(db)
+order_storage = OrderStorage(db)
 

@@ -23,3 +23,9 @@ class TicketStorage:
         for row in rows:
             output.append(Ticket.parse_obj(row))
         return output
+
+    async def get_by_id(self, ticket_id: int) -> Ticket:
+        sql = 'SELECT * FROM [Ticket] WHERE ticket_id = ?'
+        row = await self.db.execute(sql, ticket_id)
+
+        return Ticket.parse_obj(row[0])

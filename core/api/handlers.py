@@ -2,10 +2,12 @@ from typing import Dict, List
 
 from fastapi import APIRouter, Depends
 
-from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage, race_storage
-from core.helpers.ticket import generate_tickets_response
+from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage, race_storage, \
+    order_storage
+from core.helpers.ticket import generate_tickets_response, generate_ticket_response
+from core.model.order import OrderResponse, OrderCreateRequest
 from core.model.race import RaceResponse
-from core.model.ticket import Ticket, TicketResponse
+from core.model.ticket import TicketResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
 
 router = APIRouter()
@@ -70,5 +72,41 @@ async def races_feed(user: User = Depends(user_storage.get_user_by_token)):
 async def tickets_by_race(race_id: int, user: User = Depends(user_storage.get_user_by_token)):
     tickets = await ticket_storage.get_by_race_id(race_id)
     return await generate_tickets_response(tickets)
+
+
+@router.post('/api/order/create', response_model=List[OrderResponse])
+async def create_order(order_request: OrderCreateRequest, user: User = Depends(user_storage.get_user_by_token)):
+    await order_storage.create(user.user_id, order_request.ticket_id)
+    orders = await order_storage.get_by_user_id(user.user_id)
+    output = []
+    for order in orders:
+        output.append(
+            OrderResponse(
+                order_id=order.order_id,
+                user_id=order.user_id,
+                ticket=await generate_ticket_response(order.ticket_id, None),
+                created_at=order.created_at,
+                is_canceled=order.is_canceled
+            )
+        )
+    return output
+
+
+@router.get('/api/orders', response_model=List[OrderResponse])
+async def get_orders(user: User = Depends(user_storage.get_user_by_token)):
+    orders = await order_storage.get_by_user_id(user.user_id)
+    output = []
+    for order in orders:
+        output.append(
+            OrderResponse(
+                order_id=order.order_id,
+                user_id=order.user_id,
+                ticket=await generate_ticket_response(order.ticket_id, None),
+                created_at=order.created_at,
+                is_canceled=order.is_canceled
+            )
+        )
+    return output
+
 
 
