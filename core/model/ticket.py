@@ -1,6 +1,10 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
+
+from core.model.road import Road
+from core.model.road_station import RoadStationResponse, TicketRoadResponse
+from core.model.station import Station
 
 
 class Ticket(BaseModel):
@@ -17,14 +21,15 @@ class Ticket(BaseModel):
 
 class TicketResponse(BaseModel):
     ticket_id: int
-    road_id: int
-    departure_station_id: int
-    arrival_station_id: int
+    road: Road
+    departure_station: RoadStationResponse
+    arrival_station: RoadStationResponse
     car_number: int
     seat_number: int
     is_bought: bool
     is_in_train: bool
     road_number: int
+    stations: List[TicketRoadResponse]
 
 
 class TicketRequest(BaseModel):

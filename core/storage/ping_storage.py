@@ -1,14 +1,7 @@
 from typing import List
 
-from pydantic import BaseModel
-
 from core.utils.utils import throw_server_error
 from core.storage.sql_server import DB
-
-
-class Hello(BaseModel):
-    user_id: int
-    first_name: str
 
 
 class PingStorage:

@@ -8,8 +8,8 @@ class TicketStorage:
     def __init__(self, db: DB) -> None:
         self.db = db
 
-    async def get_all_tickets(self):
-        sql = 'SELECT * from [Ticket] WHERE is_bought = 0'
+    async def get_all_tickets(self) -> List[Ticket]:
+        sql = 'SELECT * from [Ticket]'
         rows = await self.db.execute(sql)
         output: List[Ticket] = []
         for row in rows:
