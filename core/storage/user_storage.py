@@ -33,7 +33,6 @@ class UserStorage:
     async def get_user_by_login_password(self, login: str, password: str) -> User:
         sql = 'SELECT * FROM [User] WHERE (login_ = ? AND password_ = ?)'
         res = await self.db.execute(sql, login, password)
-        print(res)
         if not res:
             throw_not_found('No user with this login and password!')
         user = User.parse_obj(res[0])

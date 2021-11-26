@@ -28,3 +28,14 @@ class OrderStorage:
                 Order.parse_obj(row)
             )
         return output
+
+    async def cancel(self, order_id: int) -> None:
+        sql = 'UPDATE [Order] SET is_canceled = 1 WHERE order_id = ?'
+        await self.db.execute(sql, order_id)
+
+        sql2 = 'SELECT * FROM [Order] WHERE order_id = ?'
+        rows = await self.db.execute(sql2, order_id)
+        ticket_id = rows[0]['ticket_id']
+
+        sql3 = 'UPDATE [Ticket] SET is_bought = 0 WHERE ticket_id = ?'
+        await self.db.execute(sql3, ticket_id)

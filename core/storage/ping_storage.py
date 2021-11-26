@@ -13,20 +13,3 @@ class PingStorage:
         for row in cursor:
             return row['pong']
         throw_server_error('Unable to ping db')
-
-    async def get_all_hello(self):
-        sql = 'SELECT * FROM hello'
-        rows = await self.db.execute(sql)
-        output: List[Hello] = []
-        for row in rows:
-            output.append(Hello.parse_obj(row))
-        return output
-
-    async def get_value_hello(self):
-        sql = 'SELECT first_name FROM hello where user_id=1'
-        rows = await self.db.execute(sql)
-        print(rows)
-        # output: List[Hello] = []
-        # for row in rows:
-        #     output.append(Hello.parse_obj(row))
-        return rows[0]['first_name']

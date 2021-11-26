@@ -23,3 +23,7 @@ class OrderResponse(BaseModel):
 
 class OrderCreateRequest(BaseModel):
     ticket_id: int
+
+
+class OrderCancelRequest(BaseModel):
+    order_id: int
