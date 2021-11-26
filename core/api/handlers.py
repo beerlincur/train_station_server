@@ -112,7 +112,6 @@ async def get_orders(user: User = Depends(user_storage.get_user_by_token)):
 
 @router.get('/api/roads/feed', response_model=List[RoadResponse])
 async def roads_feed(user: User = Depends(user_storage.get_user_by_token)):
-    print('in handler')
     return await road_storage.get_all()
 
 

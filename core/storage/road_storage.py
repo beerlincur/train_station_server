@@ -39,5 +39,4 @@ class RoadStorage:
                     stations=stations
                 )
             )
-        print('here')
         return output
