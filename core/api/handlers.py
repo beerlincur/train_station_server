@@ -69,6 +69,11 @@ async def races_feed(user: User = Depends(user_storage.get_user_by_token)):
     return await race_storage.get_all_future_races()
 
 
+@router.get('/api/road/races', response_model=List[RaceResponse])
+async def races_by_road(road_id: int, user: User = Depends(user_storage.get_user_by_token)):
+    return await race_storage.get_races_by_road(road_id)
+
+
 @router.get('/api/tickets', response_model=List[TicketResponse])
 async def tickets_by_race(race_id: int, user: User = Depends(user_storage.get_user_by_token)):
     tickets = await ticket_storage.get_by_race_id(race_id)
