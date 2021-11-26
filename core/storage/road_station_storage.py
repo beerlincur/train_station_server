@@ -1,6 +1,6 @@
 from typing import List
 
-from core.model.road_station import RoadStation, TicketRoadResponse
+from core.model.road_station import RoadStation, RoadStationTicketResponse
 from core.storage.sql_server import DB
 
 
@@ -13,7 +13,7 @@ class RoadStationStorage:
         row = await self.db.execute(sql, road_station_id)
         return RoadStation.parse_obj(row[0])
 
-    async def get_between_ids(self, departure_rs_id: int, arrival_rs_id: int) -> List[TicketRoadResponse]:
+    async def get_between_ids(self, departure_rs_id: int, arrival_rs_id: int) -> List[RoadStationTicketResponse]:
         sql = 'SELECT s.station_id, s.name, rs.departure_time, rs.arrival_time FROM [RoadStation] as rs ' \
               'JOIN [Station] as s ON s.station_id = rs.station_id ' \
               'WHERE rs.road_station_id >= ? AND rs.road_station_id <= ? ' \
@@ -21,6 +21,6 @@ class RoadStationStorage:
         rows = await self.db.execute(sql, departure_rs_id, arrival_rs_id)
         output = []
         for row in rows:
-            output.append(TicketRoadResponse.parse_obj(row))
+            output.append(RoadStationTicketResponse.parse_obj(row))
         return output
 

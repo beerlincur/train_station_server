@@ -4,7 +4,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from core.model.road import Road
-from core.model.road_station import RoadStationResponse, TicketRoadResponse
+from core.model.road_station import RoadStationResponse, RoadStationTicketResponse
 
 
 class Ticket(BaseModel):
@@ -29,7 +29,7 @@ class TicketResponse(BaseModel):
     is_bought: bool
     is_in_train: bool
     race_number: int
-    stations: List[TicketRoadResponse]
+    stations: List[RoadStationTicketResponse]
 
 
 class TicketRequest(BaseModel):

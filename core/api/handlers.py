@@ -3,10 +3,11 @@ from typing import Dict, List
 from fastapi import APIRouter, Depends
 
 from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage, race_storage, \
-    order_storage
+    order_storage, road_storage
 from core.helpers.ticket import generate_tickets_response, generate_ticket_response
 from core.model.order import OrderResponse, OrderCreateRequest
 from core.model.race import RaceResponse
+from core.model.road import RoadResponse
 from core.model.ticket import TicketResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
 
@@ -107,6 +108,12 @@ async def get_orders(user: User = Depends(user_storage.get_user_by_token)):
             )
         )
     return output
+
+
+@router.get('/api/roads/feed', response_model=List[RoadResponse])
+async def roads_feed(user: User = Depends(user_storage.get_user_by_token)):
+    print('in handler')
+    return await road_storage.get_all()
 
 
 

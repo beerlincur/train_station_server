@@ -29,7 +29,7 @@ class RoadStationResponse(BaseModel):
     race_number: int
 
 
-class TicketRoadResponse(BaseModel):
+class RoadStationTicketResponse(BaseModel):
     station_id: int
     name: str
     departure_time: datetime
