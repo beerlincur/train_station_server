@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from core.model.road import Road
 from core.model.road_station import RoadStationResponse, RoadStationTicketResponse
+from core.model.user import User
 
 
 class Ticket(BaseModel):
@@ -71,3 +72,20 @@ class TicketRaceResponse(BaseModel):
     seat_number: int
     is_bought: bool
     is_in_train: bool
+
+
+class TicketConductorResponse(BaseModel):
+    ticket_id: int
+    departure_station_name: str
+    arrival_station_name: str
+    car_number: int
+    seat_number: int
+    is_bought: bool
+    is_in_train: bool
+    order_order_id: int
+    order_created_at: datetime
+    order_is_canceled: bool
+    user_first_name: str
+    user_second_name: str
+    user_passport: str
+

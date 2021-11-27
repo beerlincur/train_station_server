@@ -6,7 +6,7 @@ from core.api.registry import ping_storage, user_storage, server_started, VERSIO
     order_storage, road_storage
 from core.helpers.ticket import generate_tickets_response, generate_ticket_response
 from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelRequest
-from core.model.race import RaceResponse
+from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse
 from core.model.ticket import TicketResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
@@ -69,6 +69,11 @@ async def tickets_feed(user: User = Depends(user_storage.get_user_by_token)):
 @router.get('/api/races/feed', response_model=List[RaceResponse])
 async def races_feed(user: User = Depends(user_storage.get_user_by_token)):
     return await race_storage.get_all_future_races()
+
+
+@router.get('/api/races/conductor', response_model=List[RaceConductorResponse])
+async def races_by_conductor(user: User = Depends(user_storage.get_user_by_token)):
+    return await race_storage.get_races_by_conductor(user.user_id)
 
 
 @router.get('/api/road/races', response_model=List[RaceResponse])
