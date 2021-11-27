@@ -3,13 +3,14 @@ from typing import Dict, List
 from fastapi import APIRouter, Depends
 
 from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage, race_storage, \
-    order_storage, road_storage
+    order_storage, road_storage, station_storage
 from core.helpers.ticket import generate_tickets_response, generate_ticket_response
 from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelRequest
 from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse
+from core.model.station import Station
 from core.model.ticket import TicketResponse
-from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
+from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role
 
 import bcrypt
 
@@ -60,13 +61,13 @@ async def update_user(user_id: int, user_request: UserUpdateRequest,
     return user_output
 
 
-@router.get('/api/tickets/feed', response_model=List[TicketResponse])
+@router.get('/api/tickets/all', response_model=List[TicketResponse])
 async def tickets_feed(user: User = Depends(user_storage.get_user_by_token)):
     tickets = await ticket_storage.get_all_tickets()
     return await generate_tickets_response(tickets)
 
 
-@router.get('/api/races/feed', response_model=List[RaceResponse])
+@router.get('/api/races/all', response_model=List[RaceResponse])
 async def races_feed(user: User = Depends(user_storage.get_user_by_token)):
     return await race_storage.get_all_future_races()
 
@@ -140,9 +141,18 @@ async def get_orders(user: User = Depends(user_storage.get_user_by_token)):
     return output
 
 
-@router.get('/api/roads/feed', response_model=List[RoadResponse])
-async def roads_feed(user: User = Depends(user_storage.get_user_by_token)):
+@router.get('/api/roads/all', response_model=List[RoadResponse])
+async def roads_all(user: User = Depends(user_storage.get_user_by_token)):
     return await road_storage.get_all()
 
+
+@router.get('/api/stations/all', response_model=List[Station])
+async def stations_all(user: User = Depends(user_storage.get_user_by_token)):
+    return await station_storage.get_all()
+
+
+@router.get('/api/conductors/all', response_model=List[User])
+async def conductors_all(user: User = Depends(user_storage.get_user_by_token)):
+    return await user_storage.get_all_users_by_role(Role.conductor)
 
 

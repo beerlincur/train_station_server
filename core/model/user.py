@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from enum import Enum
 from typing import Optional
 
 from jose import jwt
@@ -80,3 +81,10 @@ class UserUpdateRequest(BaseModel):
             user.login_ = self.login
         if self.password:
             user.password_ = self.password
+
+
+class Role(int, Enum):
+    client = 1
+    conductor = 2
+    admin = 3
+
