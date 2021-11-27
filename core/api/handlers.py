@@ -11,6 +11,8 @@ from core.model.road import RoadResponse
 from core.model.ticket import TicketResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest
 
+import bcrypt
+
 router = APIRouter()
 
 
@@ -34,7 +36,7 @@ async def register(register_request: UserRegisterRequest):
                                   second_name=register_request.second_name,
                                   middle_name=register_request.middle_name,
                                   login=register_request.login,
-                                  password=register_request.password,
+                                  password=bcrypt.hashpw(register_request.password.encode(), bcrypt.gensalt()),
                                   passport=register_request.passport,
                                   role_id=register_request.role_id)
     token = user.get_token()

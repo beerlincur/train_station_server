@@ -1,12 +1,13 @@
 from typing import Optional, List
 
+import bcrypt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 
 from core.model.user import TokenData, User, SECRET_KEY, ALGORITHM
 from core.storage.sql_server import DB
-from core.utils.utils import throw_credential_exception, throw_not_found, throw_server_error
+from core.utils.utils import throw_credential_exception, throw_not_found, throw_server_error, throw_bad_request
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -31,11 +32,13 @@ class UserStorage:
         return user
 
     async def get_user_by_login_password(self, login: str, password: str) -> User:
-        sql = 'SELECT * FROM [User] WHERE (login_ = ? AND password_ = ?)'
-        res = await self.db.execute(sql, login, password)
+        sql = 'SELECT * FROM [User] WHERE (login_ = ?)'
+        res = await self.db.execute(sql, login)
         if not res:
             throw_not_found('No user with this login and password!')
         user = User.parse_obj(res[0])
+        if not bcrypt.checkpw(password.encode(), user.password_.encode()):
+            throw_bad_request("Wrong password!")
         return user
 
     async def get_user_by_passport(self, passport: str) -> User:
