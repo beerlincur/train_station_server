@@ -126,7 +126,7 @@ async def cancel_order(order_request: OrderCancelRequest, user: User = Depends(u
 
 @router.put('/api/ticket/set_is_in_train', response_model=List[RaceConductorResponse])
 async def set_ticket_is_in_train(ticket_request: TicketSetInTrainRequest, user: User = Depends(user_storage.get_user_by_token)):
-    await ticket_storage.set_is_in_train(ticket_request.ticket_id)
+    await ticket_storage.set_is_in_train(ticket_request.is_in_train, ticket_request.ticket_id)
     return await race_storage.get_races_by_conductor(user.user_id)
 
 

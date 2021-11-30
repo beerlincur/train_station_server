@@ -92,5 +92,6 @@ class TicketConductorResponse(BaseModel):
 
 class TicketSetInTrainRequest(BaseModel):
     ticket_id: int
+    is_in_train: int
 
 
