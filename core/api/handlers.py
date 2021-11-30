@@ -9,7 +9,7 @@ from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelReque
 from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse
 from core.model.station import Station
-from core.model.ticket import TicketResponse
+from core.model.ticket import TicketResponse, TicketSetInTrainRequest
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role
 
 import bcrypt
@@ -122,6 +122,12 @@ async def cancel_order(order_request: OrderCancelRequest, user: User = Depends(u
             )
         )
     return output
+
+
+@router.put('/api/ticket/set_is_in_train', response_model=List[RaceConductorResponse])
+async def set_ticket_is_in_train(ticket_request: TicketSetInTrainRequest, user: User = Depends(user_storage.get_user_by_token)):
+    await ticket_storage.set_is_in_train(ticket_request.ticket_id)
+    return await race_storage.get_races_by_conductor(user.user_id)
 
 
 @router.get('/api/orders', response_model=List[OrderResponse])

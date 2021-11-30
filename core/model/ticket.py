@@ -89,3 +89,8 @@ class TicketConductorResponse(BaseModel):
     user_second_name: str
     user_passport: str
 
+
+class TicketSetInTrainRequest(BaseModel):
+    ticket_id: int
+
+

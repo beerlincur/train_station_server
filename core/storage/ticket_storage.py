@@ -29,3 +29,7 @@ class TicketStorage:
         row = await self.db.execute(sql, ticket_id)
 
         return Ticket.parse_obj(row[0])
+
+    async def set_is_in_train(self, ticket_id: int) -> None:
+        sql = 'UPDATE [Ticket] SET is_in_train = 1 WHERE ticket_id = ?'
+        row = await self.db.execute(sql, ticket_id)
