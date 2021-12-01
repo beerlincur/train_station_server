@@ -10,7 +10,7 @@ from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse
 from core.model.station import Station, StationCreateRequest
 from core.model.ticket import TicketResponse, TicketSetInTrainRequest
-from core.model.train import Train, TrainCreateRequest
+from core.model.train import Train, TrainCreateRequest, TrainResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role
 
 import bcrypt
@@ -169,7 +169,7 @@ async def conductors_all(user: User = Depends(user_storage.get_user_by_token)):
     return await user_storage.get_all_users_by_role(Role.conductor)
 
 
-@router.get('/api/trains/all', response_model=List[Train])
+@router.get('/api/trains/all', response_model=List[TrainResponse])
 async def trains_all(user: User = Depends(user_storage.get_user_by_token)):
     return await train_storage.get_all()
 
