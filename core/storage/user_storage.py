@@ -5,7 +5,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 
-from core.model.user import TokenData, User, SECRET_KEY, ALGORITHM
+from core.model.user import TokenData, User, SECRET_KEY, ALGORITHM, UserResponse
 from core.storage.sql_server import DB
 from core.utils.utils import throw_credential_exception, throw_not_found, throw_server_error, throw_bad_request
 
@@ -63,6 +63,20 @@ class UserStorage:
         output: List[User] = []
         for row in rows:
             output.append(User.parse_obj(row))
+        return output
+
+    async def get_all_users(self) -> List[UserResponse]:
+        sql = 'SELECT * FROM [User]'
+        rows = await self.db.execute(sql)
+        output: List[UserResponse] = []
+        for row in rows:
+            sql2 = 'SELECT COUNT(*) as count FROM [Order] WHERE user_id = ? AND is_canceled = 0'
+            count_row = await self.db.execute(sql2, row['user_id'])
+            output.append(UserResponse(
+                **(User.parse_obj(row)).dict(),
+                amount_of_orders=count_row[0]['count']
+            ))
+        output.sort(key=lambda u: u.amount_of_orders, reverse=True)
         return output
 
     async def add(self,

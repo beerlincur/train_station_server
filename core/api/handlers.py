@@ -11,7 +11,7 @@ from core.model.road import RoadResponse
 from core.model.station import Station, StationCreateRequest
 from core.model.ticket import TicketResponse, TicketSetInTrainRequest
 from core.model.train import Train, TrainCreateRequest, TrainResponse
-from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role
+from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role, UserResponse
 
 import bcrypt
 
@@ -167,6 +167,11 @@ async def create_station(station_request: StationCreateRequest, user: User = Dep
 @router.get('/api/conductors/all', response_model=List[User])
 async def conductors_all(user: User = Depends(user_storage.get_user_by_token)):
     return await user_storage.get_all_users_by_role(Role.conductor)
+
+
+@router.get('/api/users/all', response_model=List[UserResponse])
+async def users_all(user: User = Depends(user_storage.get_user_by_token)):
+    return await user_storage.get_all_users()
 
 
 @router.get('/api/trains/all', response_model=List[TrainResponse])

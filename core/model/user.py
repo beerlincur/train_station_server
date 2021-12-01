@@ -58,6 +58,18 @@ class User(BaseModel):
                 and self.__dict__ == other.__dict__)
 
 
+class UserResponse(BaseModel):
+    user_id: int
+    first_name: str
+    second_name: str
+    middle_name: str
+    login_: str
+    password_: str
+    passport: str
+    role_id: int
+    amount_of_orders: int
+
+
 class UserLoginRequest(BaseModel):
     login: str
     password: str
