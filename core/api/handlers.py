@@ -7,7 +7,7 @@ from core.api.registry import ping_storage, user_storage, server_started, VERSIO
 from core.helpers.ticket import generate_tickets_response, generate_ticket_response
 from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelRequest
 from core.model.race import RaceResponse, RaceConductorResponse
-from core.model.road import RoadResponse
+from core.model.road import RoadResponse, RoadCreateRequest
 from core.model.station import Station, StationCreateRequest
 from core.model.ticket import TicketResponse, TicketSetInTrainRequest
 from core.model.train import Train, TrainCreateRequest, TrainResponse
@@ -150,6 +150,12 @@ async def get_orders(user: User = Depends(user_storage.get_user_by_token)):
 
 @router.get('/api/roads/all', response_model=List[RoadResponse])
 async def roads_all(user: User = Depends(user_storage.get_user_by_token)):
+    return await road_storage.get_all()
+
+
+@router.post('/api/road/create', response_model=List[RoadResponse])
+async def create_road(road_request: RoadCreateRequest, user: User = Depends(user_storage.get_user_by_token)):
+    await road_storage.create(road_request.name)
     return await road_storage.get_all()
 
 

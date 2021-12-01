@@ -18,11 +18,11 @@ class RoadStorage:
         sql = 'SELECT r.road_id, r.name, COUNT(o.order_id) AS count ' \
                 'FROM [Road] AS r ' \
                 'LEFT JOIN [Ticket] AS t ON t.road_id = r.road_id ' \
-                'LEFT JOIN [Order] AS o ON o.ticket_id = t.ticket_id ' \
-                'WHERE o.is_canceled = 0 ' \
+                'LEFT JOIN [Order] AS o ON o.ticket_id = t.ticket_id AND o.is_canceled = 0 ' \
                 'GROUP BY r.road_id, r.name ' \
                 'ORDER BY COUNT(o.order_id) DESC'
         rows = await self.db.execute(sql)
+        print(rows)
         output = []
         for r in rows:
             road_id = r['road_id']
@@ -48,3 +48,7 @@ class RoadStorage:
                 )
             )
         return output
+
+    async def create(self, name) -> None:
+        sql = 'INSERT INTO [Road] VALUES (?)'
+        row = await self.db.execute(sql, name)
