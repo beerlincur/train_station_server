@@ -22,3 +22,7 @@ class StationStorage:
                 Station.parse_obj(row)
             )
         return output
+
+    async def create(self, name) -> None:
+        sql = 'INSERT INTO [Station] VALUES (?)'
+        row = await self.db.execute(sql, name)

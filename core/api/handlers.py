@@ -8,7 +8,7 @@ from core.helpers.ticket import generate_tickets_response, generate_ticket_respo
 from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelRequest
 from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse
-from core.model.station import Station
+from core.model.station import Station, StationCreateRequest
 from core.model.ticket import TicketResponse, TicketSetInTrainRequest
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role
 
@@ -154,6 +154,12 @@ async def roads_all(user: User = Depends(user_storage.get_user_by_token)):
 
 @router.get('/api/stations/all', response_model=List[Station])
 async def stations_all(user: User = Depends(user_storage.get_user_by_token)):
+    return await station_storage.get_all()
+
+
+@router.post('/api/station/create', response_model=List[Station])
+async def create_station(station_request: StationCreateRequest, user: User = Depends(user_storage.get_user_by_token)):
+    await station_storage.create(station_request.name)
     return await station_storage.get_all()
 
 
