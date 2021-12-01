@@ -22,7 +22,6 @@ class RoadStorage:
                 'GROUP BY r.road_id, r.name ' \
                 'ORDER BY COUNT(o.order_id) DESC'
         rows = await self.db.execute(sql)
-        print(rows)
         output = []
         for r in rows:
             road_id = r['road_id']
