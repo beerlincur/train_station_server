@@ -15,12 +15,19 @@ class RoadStorage:
         return Road.parse_obj(row[0])
 
     async def get_all(self) -> List[RoadResponse]:
-        sql = 'SELECT road_id, name FROM [Road]'
+        sql = 'SELECT r.road_id, r.name, COUNT(o.order_id) AS count ' \
+                'FROM [Road] AS r ' \
+                'LEFT JOIN [Ticket] AS t ON t.road_id = r.road_id ' \
+                'LEFT JOIN [Order] AS o ON o.ticket_id = t.ticket_id ' \
+                'WHERE o.is_canceled = 0 ' \
+                'GROUP BY r.road_id, r.name ' \
+                'ORDER BY COUNT(o.order_id) DESC'
         rows = await self.db.execute(sql)
         output = []
         for r in rows:
             road_id = r['road_id']
             road_name = r['name']
+            order_count = r['count']
             sql2 = 'SELECT rs.station_id, s.name FROM [RoadStation] as rs ' \
                    'JOIN [Station] as s ON s.station_id = rs.station_id ' \
                    'WHERE rs.road_id = ? ' \
@@ -36,7 +43,8 @@ class RoadStorage:
                 RoadResponse(
                     road_id=road_id,
                     name=road_name,
-                    stations=stations
+                    stations=stations,
+                    amount_of_orders=order_count
                 )
             )
         return output

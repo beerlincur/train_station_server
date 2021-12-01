@@ -14,3 +14,4 @@ class RoadResponse(BaseModel):
     road_id: int
     name: str
     stations: List[Station]
+    amount_of_orders: int
