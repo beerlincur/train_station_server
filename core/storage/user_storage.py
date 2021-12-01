@@ -115,13 +115,15 @@ class UserStorage:
               'second_name = ?,' \
               'middle_name = ?,' \
               'login_ = ?,' \
-              'password_ = ? WHERE user_id = ?'
+              'password_ = ?,' \
+              'role_id = ? WHERE user_id = ?'
         await self.db.execute(sql,
                               user.first_name,
                               user.second_name,
                               user.middle_name,
                               user.login_,
                               user.password_,
+                              user.role_id,
                               user.user_id)
 
     async def delete(self, user_id: int):

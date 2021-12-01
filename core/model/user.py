@@ -81,6 +81,7 @@ class UserUpdateRequest(BaseModel):
     middle_name: Optional[str]
     login: Optional[str]
     password: Optional[str]
+    role_id: Optional[int]
 
     def update_user(self, user: User) -> None:
         if self.first_name:
@@ -93,6 +94,8 @@ class UserUpdateRequest(BaseModel):
             user.login_ = self.login
         if self.password:
             user.password_ = self.password
+        if self.role_id:
+            user.role_id = self.role_id
 
 
 class Role(int, Enum):
