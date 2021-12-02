@@ -14,6 +14,11 @@ class RoadStorage:
         row = await self.db.execute(sql, road_id)
         return Road.parse_obj(row[0])
 
+    async def get_id_by_race_number(self, race_number: int) -> int:
+        sql = 'SELECT TOP 1 road_id FROM [RoadStation] WHERE race_number = ?'
+        rows = await self.db.execute(sql, race_number)
+        return rows[0]['road_id']
+
     async def get_all(self) -> List[RoadResponse]:
         sql = 'SELECT r.road_id, r.name, COUNT(o.order_id) AS count ' \
                 'FROM [Road] AS r ' \

@@ -8,9 +8,9 @@ from core.helpers.ticket import generate_tickets_response, generate_ticket_respo
 from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelRequest
 from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse, RoadCreateRequest
-from core.model.road_station import RoadStationCreateRequest
+from core.model.road_station import RoadStationCreateRequest, RoadStationRaceResponse
 from core.model.station import Station, StationCreateRequest
-from core.model.ticket import TicketResponse, TicketSetInTrainRequest
+from core.model.ticket import TicketResponse, TicketSetInTrainRequest, TicketCreateRequest
 from core.model.train import Train, TrainCreateRequest, TrainResponse
 from core.model.user import User, UserRegisterRequest, Token, UserLoginRequest, UserUpdateRequest, Role, UserResponse
 
@@ -127,9 +127,24 @@ async def cancel_order(order_request: OrderCancelRequest, user: User = Depends(u
 
 
 @router.put('/api/ticket/set_is_in_train', response_model=List[RaceConductorResponse])
-async def set_ticket_is_in_train(ticket_request: TicketSetInTrainRequest, user: User = Depends(user_storage.get_user_by_token)):
+async def set_ticket_is_in_train(ticket_request: TicketSetInTrainRequest,
+                                 user: User = Depends(user_storage.get_user_by_token)):
     await ticket_storage.set_is_in_train(ticket_request.is_in_train, ticket_request.ticket_id)
     return await race_storage.get_races_by_conductor(user.user_id)
+
+
+@router.post('/api/ticket/create', response_model=List[TicketResponse])
+async def create_ticket(ticket_request: TicketCreateRequest, user: User = Depends(user_storage.get_user_by_token)):
+    await ticket_storage.create(
+        road_id=ticket_request.road_id,
+        departure_station_id=ticket_request.departure_station_id,
+        arrival_station_id=ticket_request.arrival_station_id,
+        car_number=ticket_request.car_number,
+        seat_number=ticket_request.seat_number,
+        race_number=ticket_request.race_number
+    )
+    tickets = await ticket_storage.get_by_race_id(ticket_request.race_number)
+    return await generate_tickets_response(tickets)
 
 
 @router.get('/api/orders', response_model=List[OrderResponse])
@@ -200,3 +215,9 @@ async def create_road_station(road_station_request: RoadStationCreateRequest,
     return await race_storage.get_all_future_races()
 
 
+@router.get('/api/race/road_stations')
+async def road_stations_by_race(race_number: int, user: User = Depends(user_storage.get_user_by_token)):
+    return {
+        "road_stations": await road_station_storage.get_by_race(race_number),
+        "road_id": await road_storage.get_id_by_race_number(race_number)
+    }

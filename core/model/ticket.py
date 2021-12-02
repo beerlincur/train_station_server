@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 from core.model.road import Road
 from core.model.road_station import RoadStationResponse, RoadStationTicketResponse
-from core.model.user import User
 
 
 class Ticket(BaseModel):
@@ -33,7 +32,7 @@ class TicketResponse(BaseModel):
     stations: List[RoadStationTicketResponse]
 
 
-class TicketRequest(BaseModel):
+class TicketUpdateRequest(BaseModel):
     road_id: Optional[int]
     departure_station_id: Optional[int]
     arrival_station_id: Optional[int]
@@ -95,3 +94,10 @@ class TicketSetInTrainRequest(BaseModel):
     is_in_train: int
 
 
+class TicketCreateRequest(BaseModel):
+    road_id: int
+    departure_station_id: int
+    arrival_station_id: int
+    car_number: int
+    seat_number: int
+    race_number: int

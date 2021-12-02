@@ -33,3 +33,29 @@ class TicketStorage:
     async def set_is_in_train(self, is_in_train: int, ticket_id: int) -> None:
         sql = 'UPDATE [Ticket] SET is_in_train = ? WHERE ticket_id = ?'
         row = await self.db.execute(sql, is_in_train, ticket_id)
+
+    async def create(self,
+                     road_id: int,
+                     departure_station_id: int,
+                     arrival_station_id: int,
+                     car_number: int,
+                     seat_number: int,
+                     race_number: int) -> None:
+        sql = 'INSERT INTO [Ticket] (road_id,' \
+              'departure_station_id,' \
+              'arrival_station_id,' \
+              'car_number,' \
+              'seat_number,' \
+              'is_bought,' \
+              'is_in_train,' \
+              'race_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+
+        await self.db.execute(sql,
+                              road_id,
+                              departure_station_id,
+                              arrival_station_id,
+                              car_number,
+                              seat_number,
+                              False,
+                              False,
+                              race_number)
