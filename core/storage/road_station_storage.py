@@ -74,5 +74,3 @@ class RoadStationStorage:
                                     arrival_time,
                                     departure_time,
                                     race_number)
-        if not row:
-            throw_server_error("Невозможно добавить road station")

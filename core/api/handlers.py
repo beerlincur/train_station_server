@@ -211,7 +211,13 @@ async def create_train(train_request: TrainCreateRequest,
 @router.post('/api/road_station/create', response_model=List[RaceResponse])
 async def create_road_station(road_station_request: RoadStationCreateRequest,
                               user: User = Depends(user_storage.get_user_by_token)):
-    await road_station_storage.create(road_station_request)
+    await road_station_storage.create(road_id=road_station_request.road_id,
+                                      station_id=road_station_request.station_id,
+                                      train_id=road_station_request.train_id,
+                                      num_in_road=road_station_request.num_in_road,
+                                      arrival_time=road_station_request.arrival_time,
+                                      departure_time=road_station_request.departure_time,
+                                      race_number=road_station_request.race_number)
     return await race_storage.get_all_future_races()
 
 
@@ -221,3 +227,9 @@ async def road_stations_by_race(race_number: int, user: User = Depends(user_stor
         "road_stations": await road_station_storage.get_by_race(race_number),
         "road_id": await road_storage.get_id_by_race_number(race_number)
     }
+
+
+@router.delete('/api/race/delete')
+async def delete_race(race_number: int, user: User = Depends(user_storage.get_user_by_token)):
+    await race_storage.delete(race_number)
+    return await race_storage.get_all_future_races()

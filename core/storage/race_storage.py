@@ -8,13 +8,23 @@ from core.model.road_station import RoadStationRaceResponse
 from core.model.station import Station
 from core.model.ticket import TicketRaceResponse, TicketConductorResponse
 from core.model.train import Train
-from core.model.user import User
 from core.storage.sql_server import DB
 
 
 class RaceStorage:
     def __init__(self, db: DB) -> None:
         self.db = db
+
+    async def delete(self, race_number: int) -> None:
+        sql = 'DELETE FROM [Order] WHERE ticket_id IN ' \
+              '(SELECT ticket_id FROM [Ticket] WHERE race_number = ?)'
+        await self.db.execute(sql, race_number)
+
+        sql2 = 'DELETE FROM [Ticket] WHERE race_number = ?'
+        await self.db.execute(sql2, race_number)
+
+        sql3 = 'DELETE FROM [RoadStation] WHERE race_number = ?'
+        await self.db.execute(sql3, race_number)
 
     async def get_all_future_races(self) -> List[RaceResponse]:
         sql = 'SELECT DISTINCT race_number FROM [RoadStation] WHERE departure_time >= ?'
