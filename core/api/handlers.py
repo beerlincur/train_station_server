@@ -3,11 +3,12 @@ from typing import Dict, List
 from fastapi import APIRouter, Depends
 
 from core.api.registry import ping_storage, user_storage, server_started, VERSION, ticket_storage, race_storage, \
-    order_storage, road_storage, station_storage, train_storage
+    order_storage, road_storage, station_storage, train_storage, road_station_storage
 from core.helpers.ticket import generate_tickets_response, generate_ticket_response
 from core.model.order import OrderResponse, OrderCreateRequest, OrderCancelRequest
 from core.model.race import RaceResponse, RaceConductorResponse
 from core.model.road import RoadResponse, RoadCreateRequest
+from core.model.road_station import RoadStationCreateRequest
 from core.model.station import Station, StationCreateRequest
 from core.model.ticket import TicketResponse, TicketSetInTrainRequest
 from core.model.train import Train, TrainCreateRequest, TrainResponse
@@ -186,8 +187,16 @@ async def trains_all(user: User = Depends(user_storage.get_user_by_token)):
 
 
 @router.post('/api/train/create', response_model=List[Train])
-async def create_train(train_request: TrainCreateRequest, user: User = Depends(user_storage.get_user_by_token)):
+async def create_train(train_request: TrainCreateRequest,
+                       user: User = Depends(user_storage.get_user_by_token)):
     await train_storage.create(train_request.name)
     return await train_storage.get_all()
+
+
+@router.post('/api/road_station/create', response_model=List[RaceResponse])
+async def create_road_station(road_station_request: RoadStationCreateRequest,
+                              user: User = Depends(user_storage.get_user_by_token)):
+    await road_station_storage.create(road_station_request)
+    return await race_storage.get_all_future_races()
 
 

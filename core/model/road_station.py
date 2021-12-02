@@ -42,3 +42,13 @@ class RoadStationRaceResponse(BaseModel):
     num_in_road: int
     arrival_time: datetime
     departure_time: datetime
+
+
+class RoadStationCreateRequest(BaseModel):
+    road_id: int
+    station_id: int
+    train_id: int
+    num_in_road: int
+    arrival_time: datetime
+    departure_time: datetime
+    race_number: int

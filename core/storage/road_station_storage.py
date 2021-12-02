@@ -1,7 +1,9 @@
+from datetime import datetime
 from typing import List
 
 from core.model.road_station import RoadStation, RoadStationTicketResponse
 from core.storage.sql_server import DB
+from core.utils.utils import throw_server_error
 
 
 class RoadStationStorage:
@@ -24,3 +26,22 @@ class RoadStationStorage:
             output.append(RoadStationTicketResponse.parse_obj(row))
         return output
 
+    async def create(self,
+                     road_id: int,
+                     station_id: int,
+                     train_id: int,
+                     num_in_road: int,
+                     arrival_time: datetime,
+                     departure_time: datetime,
+                     race_number: int) -> None:
+        sql = 'INSERT INTO [RoadStation] VALUES (?, ?, ?, ?, ?, ?, ?)'
+        row = await self.db.execute(sql,
+                                    road_id,
+                                    station_id,
+                                    train_id,
+                                    num_in_road,
+                                    arrival_time,
+                                    departure_time,
+                                    race_number)
+        if not row:
+            throw_server_error("Невозможно добавить road station")
